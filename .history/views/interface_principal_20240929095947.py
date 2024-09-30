@@ -1,0 +1,136 @@
+﻿import os
+import time
+import sys
+
+class InterfacePrincipale:
+    def __init__(self,DATA):
+        self.DATA = DATA
+
+    def clear_console(self):
+        time.sleep(1)
+        os.system('cls')
+        
+    def afficher_texte_couleur(texte, couleur):
+        couleurs = {
+            'bleu': '\033[94m',
+            'rouge': '\033[91m'
+        }
+        
+        couleur_code = couleurs.get(couleur, '\033[0m')
+        print(f"{couleur_code}{texte}\033[0m")
+        
+    def afficher_chargement(duree):
+        chargement = ['|', '/', '-', '\\']
+        fin = time.time() + duree
+        couleur = '\033[96m'  # cyan
+        reset = '\033[0m'  # Réinitialisation
+
+        while time.time() < fin:
+            for symbole in chargement:
+                if time.time() >= fin:
+                    break
+                sys.stdout.write(f'\r{couleur}Chargement... {symbole}{reset}')
+                sys.stdout.flush()
+                time.sleep(0.2)
+
+        sys.stdout.write(f'\r{couleur}Chargement terminé!{reset}   \n')
+
+
+    def gestion_erreur(self, message, fonction_validation):
+        while True:
+            try:
+                user_input = input(message)
+                
+                if fonction_validation(user_input):
+                    return user_input
+                else:
+                    print("\033[91m\n❌ Entrée invalide. Veuillez réessayer.\033[0m\n")
+            except Exception as e:
+                print(f"\n⚠️ Une erreur s'est produite : {e}\n")
+                print("Veuillez réessayer.\n")
+
+    def valider_choix(self, option):
+        return option.isdigit() and int(option) in [1, 2, 3]
+
+    def afficher_menu(self):
+        print("\033[94m" + """\
+        ╔═════════════════════╗
+        ║   Menu Principal    ║
+        ╚═════════════════════╝
+        
+        1. 🕸️ Lancer le scraping par défaut de la page Alibaba.com 
+        2. ⚙️ Options de scraping 
+        3. 🚪 Quitter
+        
+        """ + "\033[0m"
+        )
+        choix = self.gestion_erreur("➤ Sélectionnez une option : ", self.valider_choix)
+        return int(choix)
+
+    
+    def afficher_categories(self,categories):
+        """Affiche les catégories avec des index pour permettre la sélection."""
+        print("Catégories disponibles :")
+        for index, categorie in enumerate(categories.keys()):
+            print(f"{index + 1}. {categorie}")
+            
+    def afficher_sous_categories(self,sous_categories):
+        """Affiche les sous-catégories avec des index pour permettre la sélection."""
+        print("Sous-catégories disponibles :")
+        for index, sous_categorie in enumerate(sous_categories.keys()):
+            print(f"{index + 1}. {sous_categorie}")
+            
+    def selectionner_choix(self,choix_max):
+        """Permet à l'utilisateur de sélectionner des choix multiples."""
+        choix = input(f"Entrez les numéros des options que vous souhaitez sélectionner (ex: 1,3) : ")
+        choix_list = [int(c) for c in choix.split(',') if c.isdigit() and 1 <= int(c) <= choix_max]
+        return choix_list
+    
+    def programme_option_scraping(self,categories):
+        # Étape 1: Sélection des catégories
+        self.afficher_categories(categories)
+        choix_categories = self.selectionner_choix(len(categories))
+
+        # Étape 2: Sélection des sous-catégories
+        selections = {}
+        for index in choix_categories:
+            categorie = list(categories.keys())[index - 1]
+            print(f"\nSélection de la catégorie : {categorie}")
+            
+            sous_categories = categories[categorie]["SousCategorie"]
+            self.afficher_sous_categories(sous_categories)
+            
+            choix_sous_categories = self.selectionner_choix(len(sous_categories))
+            selections[categorie] = [list(sous_categories.keys())[i - 1] for i in choix_sous_categories]
+
+        # Stocker et afficher les choix de l'utilisateur
+        print("\nVos choix :")
+        for categorie, sous_categories in selections.items():
+            print(f"Catégorie : {categorie}")
+            print("Sous-catégories sélectionnées :", ", ".join(sous_categories))
+        
+    def programme_principal(self):
+        # while True:
+            self.clear_console()
+            choix = self.afficher_menu()
+            
+            if choix == 1:
+                print("\033[5;92mLancement du scraping par défaut... 🕸️\033[0m")
+                
+                
+            elif choix == 2:
+                print("\033[5;92mOuverture des options de scraping... ⚙️\033[0m")
+                self.programme_option_scraping(self.DATA)
+                
+                
+                
+            elif choix == 3:
+                print("\033[5;92mÀ bientôt... 🚪\033[0m")
+                # break
+
+# Exécution du programme
+# if __name__ == "__main__":
+    
+#     interface_principale = InterfacePrincipale()
+#     InterfacePrincipale.afficher_chargement(5)
+#     interface_principale.programme_principal()

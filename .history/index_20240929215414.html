@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau des Produits - Boutique Chic</title>
+    <style>
+        /* Style général du corps */
+        body {
+            background: linear-gradient(135deg, #f8b195, #f67280, #c06c84, #6c5b7b, #355c7d);
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Style du tableau */
+        table {
+            width: 80%;
+            margin: 40px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Style des en-têtes */
+        th {
+            background-color: #6c5b7b;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* Style des lignes du tableau */
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Style alterné pour les lignes */
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        /* Style au survol */
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Style pour les images */
+        img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Style des prix */
+        .price {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        /* Pied de page élégant */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #355c7d;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Les données du fichier CSV seront insérées ici -->
+            <!-- Exemple d'une ligne générée : -->
+            <tr>
+                <td>Produit chic en cuir</td>
+                <td class="price">150,00 €</td>
+                <td><img src="images/product_1.jpg" alt="Produit 1"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <footer>
+        <p>&copy; 2024 Boutique Chic. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        // Charger et afficher les données du fichier JSON
+        fetch('Data.json')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector('tbody');
+            data.forEach(product => {
+                const tableRow = `
+                <tr>
+                    <td>${product.description}</td>
+                    <td class="price">${product.prix}</td>
+                    <td><img src="${product.url_image}" alt="${product.description}"></td>
+                </tr>`;
+                tableBody.innerHTML += tableRow;
+            });
+        })
+        .catch(error => console.log('Erreur de chargement des produits :', error));
+    </script>
+</body>
+</html>
